@@ -64,6 +64,10 @@ resource "azurerm_storage_account" "backend" {
     purpose = "terraform-state"
     managed_by = "terraform"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Container for state files
@@ -71,6 +75,10 @@ resource "azurerm_storage_container" "backend" {
   name                  = "tfstate"
   storage_account_name  = azurerm_storage_account.backend.name
   container_access_type = "private"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 output "storage_account_name" {

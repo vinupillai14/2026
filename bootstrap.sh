@@ -17,6 +17,24 @@ if [ -z "$ARM_CLIENT_ID" ] || [ -z "$ARM_CLIENT_SECRET" ] || [ -z "$ARM_SUBSCRIP
   exit 1
 fi
 
+# Check if backend storage account already exists
+echo "🔍 Checking if backend storage account already exists..."
+if az storage account show --name tfstateacct001 --resource-group rg-terraform-backend &>/dev/null 2>&1; then
+  echo "✅ Backend storage account already exists!"
+  echo ""
+  echo "📝 Backend Configuration:"
+  echo "   Storage Account: tfstateacct001"
+  echo "   Container: tfstate"
+  echo "   Resource Group: rg-terraform-backend"
+  echo ""
+  echo "The following state files are being used:"
+  echo "   - dev.tfstate (dev environment)"
+  echo "   - preprod.tfstate (preprod environment)"
+  echo ""
+  echo "Bootstrap has already completed. No action needed."
+  exit 0
+fi
+
 # Navigate to bootstrap directory
 cd "$(dirname "$0")/DevOps/terraform/bootstrap"
 
