@@ -26,18 +26,6 @@ variable "account_replication_type" {
   default     = "LRS"
 }
 
-variable "account_kind" {
-  description = "The Kind of storage account (StorageV2, BlobStorage, etc.)"
-  type        = string
-  default     = "StorageV2"
-}
-
-variable "enable_https_traffic_only" {
-  description = "Force HTTPS for storage account"
-  type        = bool
-  default     = true
-}
-
 variable "tags" {
   description = "A map of tags to assign to the resource"
   type        = map(string)
@@ -53,7 +41,7 @@ variable "enable_network_rules" {
 variable "network_default_action" {
   description = "Default action for network rules (Allow or Deny)"
   type        = string
-  default     = "Deny"
+  default     = "Allow"
 }
 
 variable "ip_rules" {
