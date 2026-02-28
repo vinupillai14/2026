@@ -65,6 +65,18 @@ variable "max_node_count" {
   default     = 8
 }
 
+variable "azure_subscription_id" {
+  description = "Azure subscription ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "azure_tenant_id" {
+  description = "Azure tenant ID"
+  type        = string
+  sensitive   = true
+}
+
 variable "azure_client_id" {
   description = "Azure service principal client ID"
   type        = string
