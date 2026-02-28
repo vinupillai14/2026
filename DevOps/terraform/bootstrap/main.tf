@@ -53,7 +53,7 @@ resource "azurerm_resource_group" "backend" {
 }
 
 resource "azurerm_storage_account" "backend" {
-  name                       = "tfstateacct001"
+  name                       = "tfstatubs2026"
   resource_group_name        = azurerm_resource_group.backend.name
   location                   = azurerm_resource_group.backend.location
   account_tier               = "Standard"
