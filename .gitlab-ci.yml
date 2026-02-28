@@ -6,10 +6,6 @@ stages:
 variables:
   TERRAFORM_VERSION: "1.5"
   TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/dev"
-  # Vault configuration - set these in GitLab CI/CD Variables
-  # VAULT_ADDR: https://vault-xxxxx.vault.11b0221a.budgets.hcp-demo.com
-  # VAULT_JWT_ROLE: gitlab-role
-  # VAULT_SECRET_PATH: secret/data/azure/terraform/arm
 
 image: 
   name: hashicorp/terraform:${TERRAFORM_VERSION}
@@ -17,44 +13,8 @@ image:
 
 before_script:
   - cd ${TF_ROOT}
-  
-  # Fetch secrets from Vault using GitLab JWT
-  - |
-    if [ -n "$VAULT_ADDR" ] && [ -n "$VAULT_JWT_ROLE" ]; then
-      echo "🔐 Authenticating with Vault..."
-      
-      # Get JWT token from GitLab OIDC
-      export VAULT_TOKEN=$(curl -s --request POST \
-        --data @- ${VAULT_ADDR}/v1/auth/jwt/login \
-        <<< "{\"role\":\"${VAULT_JWT_ROLE}\",\"jwt\":\"${CI_JOB_JWT}\"}" \
-        | jq -r '.auth.client_token')
-      
-      if [ "$VAULT_TOKEN" != "null" ] && [ -n "$VAULT_TOKEN" ]; then
-        echo "✅ Vault authentication successful"
-        
-        # Retrieve ARM credentials from Vault
-        export VAULT_SECRET=$(curl -s -H "X-Vault-Token: $VAULT_TOKEN" \
-          "${VAULT_ADDR}/v1/${VAULT_SECRET_PATH}")
-        
-        export ARM_CLIENT_ID=$(echo $VAULT_SECRET | jq -r '.data.data.client_id // empty')
-        export ARM_CLIENT_SECRET=$(echo $VAULT_SECRET | jq -r '.data.data.client_secret // empty')
-        export ARM_SUBSCRIPTION_ID=$(echo $VAULT_SECRET | jq -r '.data.data.subscription_id // empty')
-        export ARM_TENANT_ID=$(echo $VAULT_SECRET | jq -r '.data.data.tenant_id // empty')
-        
-        if [ -z "$ARM_CLIENT_ID" ]; then
-          echo "❌ Failed to retrieve secrets from Vault"
-          exit 1
-        fi
-        echo "✅ Secrets retrieved from Vault"
-      else
-        echo "❌ Failed to authenticate with Vault"
-        exit 1
-      fi
-    else
-      echo "⚠️  Vault not configured. Using GitLab variables as fallback..."
-    fi
-  
   - terraform --version
+  - echo "✅ ARM credentials configured from GitLab CI/CD Variables"
 
 # Validate Terraform code on every push
 validate:
