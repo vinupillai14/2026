@@ -129,6 +129,18 @@ variable "enable_kube_dashboard" {
   default     = false
 }
 
+variable "client_id" {
+  description = "Service principal client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "client_secret" {
+  description = "Service principal client secret"
+  type        = string
+  sensitive   = true
+}
+
 variable "additional_node_pools" {
   description = "List of additional node pools to create"
   type = list(object({

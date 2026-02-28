@@ -39,6 +39,9 @@ module "aks" {
   min_count                 = var.min_node_count
   max_count                 = var.max_node_count
   
+  client_id     = var.azure_client_id
+  client_secret = var.azure_client_secret
+  
   tags = merge(
     var.tags,
     { environment = "preprod" }

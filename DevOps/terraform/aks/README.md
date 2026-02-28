@@ -37,13 +37,13 @@ module "aks" {
 ## Requirements
 
 - Azure subscription with appropriate permissions
+- Service Principal with credentials (client_id and client_secret)
 - Terraform >= 1.0
 - AzureRM provider >= 3.0
-- Authentication: Azure CLI (`az login`) or OIDC for CI/CD (see [DevOps/AUTH.md](../../AUTH.md))
 
 ## Notes
 
 - Ensure the AKS cluster name is globally unique
+- Service principal credentials must be provided securely (use env vars or secrets management)
 - Adjust `availability_zones` based on your target region
 - Default node pool uses auto-scaling (min 2, max 5 nodes by default)
-- Authentication is handled by Azure CLI or OIDC (no credentials needed in code)
