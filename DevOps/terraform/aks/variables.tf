@@ -85,8 +85,6 @@ variable "os_disk_size_gb" {
   default     = 128
 }
 
-
-
 variable "network_plugin" {
   description = "Network plugin (azure or kubenet)"
   type        = string
@@ -145,11 +143,11 @@ variable "additional_node_pools" {
   description = "List of additional node pools to create"
   type = list(object({
     name                = string
-    node_count         = number
-    vm_size            = string
+    node_count          = number
+    vm_size             = string
     enable_auto_scaling = bool
-    min_count          = number
-    max_count          = number
+    min_count           = number
+    max_count           = number
   }))
   default = []
 }

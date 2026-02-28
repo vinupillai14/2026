@@ -1,11 +1,11 @@
 resource "azurerm_storage_account" "this" {
-  name                     = var.name
-  resource_group_name      = var.resource_group_name
-  location                 = var.location
-  account_tier             = var.account_tier
-  account_replication_type = var.account_replication_type
+  name                       = var.name
+  resource_group_name        = var.resource_group_name
+  location                   = var.location
+  account_tier               = var.account_tier
+  account_replication_type   = var.account_replication_type
   https_traffic_only_enabled = true
-  tags                     = var.tags
+  tags                       = var.tags
 
   dynamic "network_rules" {
     for_each = var.enable_network_rules ? [1] : []
