@@ -124,6 +124,7 @@ plan_preprod:
     expire_in: 7 days
   only:
     - main
+  when: manual
   environment:
     name: preprod
     action: prepare
