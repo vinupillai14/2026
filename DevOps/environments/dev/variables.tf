@@ -93,7 +93,7 @@ variable "tags" {
   description = "Common tags for all resources"
   type        = map(string)
   default = {
-    project = "2026"
+    project    = "2026"
     managed_by = "terraform"
   }
 }
