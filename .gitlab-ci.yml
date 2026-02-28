@@ -2,10 +2,10 @@ stages:
   - validate
   - plan
   - apply
+  - destroy
 
 variables:
   TERRAFORM_VERSION: "1.5"
-  TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/dev"
 
 image: 
   name: hashicorp/terraform:${TERRAFORM_VERSION}
@@ -26,9 +26,9 @@ validate:
   stage: validate
   script:
     - echo "🔍 Validating Terraform configuration..."
-    - terraform init -backend=false
-    - terraform validate
-    - terraform fmt -check -recursive ../../terraform/
+    - cd ${CI_PROJECT_DIR}/DevOps/environments/dev && terraform init -backend=false && terraform validate
+    - cd ${CI_PROJECT_DIR}/DevOps/environments/preprod && terraform init -backend=false && terraform validate
+    - terraform fmt -check -recursive ${CI_PROJECT_DIR}/DevOps/
   only:
     - merge_requests
     - main
@@ -39,17 +39,20 @@ format_check:
   stage: validate
   script:
     - echo "📋 Checking Terraform format..."
-    - terraform fmt -check -recursive ../../
+    - terraform fmt -check -recursive ${CI_PROJECT_DIR}/DevOps/
   only:
     - merge_requests
     - main
   allow_failure: true
 
-# Plan changes
-plan:
+# ==== DEV ENVIRONMENT ====
+
+plan_dev:
   stage: plan
+  variables:
+    TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/dev"
   script:
-    - echo "📊 Running Terraform plan..."
+    - echo "📊 Planning DEV environment..."
     - terraform init
     - terraform plan -out=tfplan
   artifacts:
@@ -59,26 +62,26 @@ plan:
       terraform: ${TF_ROOT}/plan.json
     expire_in: 7 days
   only:
-    - merge_requests
     - main
   environment:
     name: dev
     action: prepare
 
-# Auto-apply on push to main
-apply:
+apply_dev:
   stage: apply
+  variables:
+    TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/dev"
   script:
-    - echo "🚀 Applying Terraform configuration..."
+    - echo "🚀 Applying DEV environment..."
     - terraform init
     - terraform apply -auto-approve tfplan
     - echo ""
-    - echo "✅ Deployment successful!"
+    - echo "✅ DEV Deployment successful!"
     - echo ""
     - echo "Cluster Details:"
     - terraform output
   dependencies:
-    - plan
+    - plan_dev
   only:
     - main
   when: manual
@@ -87,16 +90,83 @@ apply:
     action: prepare
     deployment_tier: production
 
-# Destroy environment (manual only - safety measure)
-destroy:
-  stage: apply
+destroy_dev:
+  stage: destroy
+  variables:
+    TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/dev"
   script:
-    - echo "⚠️  Destroying Terraform-managed resources..."
+    - echo "⚠️  Destroying DEV environment..."
     - terraform init
     - terraform destroy -auto-approve
-    - echo "✅ Destroy complete"
+    - echo "✅ DEV destroy complete"
   only:
     - main
+  when: manual
+  environment:
+    name: dev
+    action: stop
+
+# ==== PREPROD ENVIRONMENT ====
+
+plan_preprod:
+  stage: plan
+  variables:
+    TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/preprod"
+  script:
+    - echo "📊 Planning PREPROD environment..."
+    - terraform init
+    - terraform plan -out=tfplan
+  artifacts:
+    paths:
+      - ${TF_ROOT}/tfplan
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+    expire_in: 7 days
+  only:
+    - main
+  environment:
+    name: preprod
+    action: prepare
+
+apply_preprod:
+  stage: apply
+  variables:
+    TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/preprod"
+  script:
+    - echo "🚀 Applying PREPROD environment..."
+    - terraform init
+    - terraform apply -auto-approve tfplan
+    - echo ""
+    - echo "✅ PREPROD Deployment successful!"
+    - echo ""
+    - echo "Cluster Details:"
+    - terraform output
+  dependencies:
+    - plan_preprod
+  only:
+    - main
+  when: manual
+  environment:
+    name: preprod
+    action: prepare
+    deployment_tier: production
+
+destroy_preprod:
+  stage: destroy
+  variables:
+    TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/preprod"
+  script:
+    - echo "⚠️  Destroying PREPROD environment..."
+    - terraform init
+    - terraform destroy -auto-approve
+    - echo "✅ PREPROD destroy complete"
+  only:
+    - main
+  when: manual
+  environment:
+    name: preprod
+    action: stop
+
   when: manual
   environment:
     name: dev
