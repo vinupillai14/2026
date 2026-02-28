@@ -76,6 +76,8 @@ apply_dev:
   script:
     - echo "🚀 Applying DEV environment..."
     - terraform init
+    - rm -f tfplan  # Delete old plan in case code changed
+    - terraform plan -out=tfplan
     - terraform apply -auto-approve tfplan
     - echo ""
     - echo "✅ DEV Deployment successful!"
@@ -138,6 +140,8 @@ apply_preprod:
   script:
     - echo "🚀 Applying PREPROD environment..."
     - terraform init
+    - rm -f tfplan  # Delete old plan in case code changed
+    - terraform plan -out=tfplan
     - terraform apply -auto-approve tfplan
     - echo ""
     - echo "✅ PREPROD Deployment successful!"
