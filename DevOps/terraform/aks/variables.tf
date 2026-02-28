@@ -85,17 +85,7 @@ variable "os_disk_size_gb" {
   default     = 128
 }
 
-variable "client_id" {
-  description = "Service principal client ID"
-  type        = string
-  sensitive   = true
-}
 
-variable "client_secret" {
-  description = "Service principal client secret"
-  type        = string
-  sensitive   = true
-}
 
 variable "network_plugin" {
   description = "Network plugin (azure or kubenet)"

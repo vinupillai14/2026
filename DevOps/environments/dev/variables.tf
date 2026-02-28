@@ -65,18 +65,6 @@ variable "max_node_count" {
   default     = 4
 }
 
-variable "azure_client_id" {
-  description = "Azure service principal client ID"
-  type        = string
-  sensitive   = true
-}
-
-variable "azure_client_secret" {
-  description = "Azure service principal client secret"
-  type        = string
-  sensitive   = true
-}
-
 variable "tags" {
   description = "Common tags for all resources"
   type        = map(string)

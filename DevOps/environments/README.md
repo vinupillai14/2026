@@ -64,14 +64,16 @@ terraform apply tfplan
 
 ## Required Environment Variables
 
-Both environments require Azure service principal credentials. Set these before running Terraform:
+No environment variables required! Authentication is handled by Azure CLI.
+
+### Setup Azure CLI Authentication
 
 ```bash
-export TF_VAR_azure_client_id="<client-id>"
-export TF_VAR_azure_client_secret="<client-secret>"
+az login
+az account set --subscription <your-subscription-id>
 ```
 
-Or provide them via `.tfvars` files (not recommended for secrets).
+For other authentication methods (OIDC for CI/CD, managed identity, etc.), see [DevOps/AUTH.md](../AUTH.md).
 
 ## Customization
 
