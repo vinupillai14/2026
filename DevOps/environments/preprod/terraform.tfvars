@@ -11,7 +11,7 @@ aks_dns_prefix   = "akspreprod2026"
 node_pool_vm_size = "Standard_D4_v3"
 node_pool_count   = 3
 
-enable_auto_scaling = true
+enable_auto_scaling = false
 min_node_count      = 3
 max_node_count      = 8
 
