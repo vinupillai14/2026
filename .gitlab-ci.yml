@@ -1,0 +1,97 @@
+stages:
+  - validate
+  - plan
+  - apply
+
+variables:
+  TERRAFORM_VERSION: "1.5"
+  TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/dev"
+
+image: 
+  name: hashicorp/terraform:${TERRAFORM_VERSION}
+  entrypoint: [""]
+
+before_script:
+  - cd ${TF_ROOT}
+  - terraform --version
+
+# Validate Terraform code on every push
+validate:
+  stage: validate
+  script:
+    - echo "🔍 Validating Terraform configuration..."
+    - terraform init -backend=false
+    - terraform validate
+    - terraform fmt -check -recursive ../../terraform/
+  only:
+    - merge_requests
+    - main
+  allow_failure: false
+
+# Format check
+format_check:
+  stage: validate
+  script:
+    - echo "📋 Checking Terraform format..."
+    - terraform fmt -check -recursive ../../
+  only:
+    - merge_requests
+    - main
+  allow_failure: true
+
+# Plan changes
+plan:
+  stage: plan
+  script:
+    - echo "📊 Running Terraform plan..."
+    - terraform init
+    - terraform plan -out=tfplan
+  artifacts:
+    paths:
+      - ${TF_ROOT}/tfplan
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+    expire_in: 7 days
+  only:
+    - merge_requests
+    - main
+  environment:
+    name: dev
+    action: prepare
+
+# Auto-apply on push to main
+apply:
+  stage: apply
+  script:
+    - echo "🚀 Applying Terraform configuration..."
+    - terraform init
+    - terraform apply -auto-approve tfplan
+    - echo ""
+    - echo "✅ Deployment successful!"
+    - echo ""
+    - echo "Cluster Details:"
+    - terraform output
+  dependencies:
+    - plan
+  only:
+    - main
+  when: manual
+  environment:
+    name: dev
+    action: prepare
+    deployment_tier: production
+
+# Destroy environment (manual only - safety measure)
+destroy:
+  stage: apply
+  script:
+    - echo "⚠️  Destroying Terraform-managed resources..."
+    - terraform init
+    - terraform destroy -auto-approve
+    - echo "✅ Destroy complete"
+  only:
+    - main
+  when: manual
+  environment:
+    name: dev
+    action: stop
