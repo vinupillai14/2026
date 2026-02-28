@@ -47,21 +47,21 @@ resource "azurerm_resource_group" "backend" {
   location = "eastus"
 
   tags = {
-    purpose = "terraform-state"
+    purpose    = "terraform-state"
     managed_by = "terraform"
   }
 }
 
 resource "azurerm_storage_account" "backend" {
-  name                     = "tfstateacct001"
-  resource_group_name      = azurerm_resource_group.backend.name
-  location                 = azurerm_resource_group.backend.location
-  account_tier             = "Standard"
-  account_replication_type = "GRS"
+  name                       = "tfstateacct001"
+  resource_group_name        = azurerm_resource_group.backend.name
+  location                   = azurerm_resource_group.backend.location
+  account_tier               = "Standard"
+  account_replication_type   = "GRS"
   https_traffic_only_enabled = true
 
   tags = {
-    purpose = "terraform-state"
+    purpose    = "terraform-state"
     managed_by = "terraform"
   }
 
