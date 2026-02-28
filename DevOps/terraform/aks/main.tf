@@ -6,14 +6,15 @@ resource "azurerm_kubernetes_cluster" "this" {
   tags                = var.tags
 
   default_node_pool {
-    name            = var.default_node_pool_name
-    node_count      = var.enable_auto_scaling ? null : var.default_node_pool_count
-    vm_size         = var.default_node_pool_vm_size
-    zones           = var.availability_zones
-    max_pods        = var.max_pods
-    os_disk_size_gb = var.os_disk_size_gb
-    min_count       = var.enable_auto_scaling ? var.min_count : null
-    max_count       = var.enable_auto_scaling ? var.max_count : null
+    name                = var.default_node_pool_name
+    enable_auto_scaling = var.enable_auto_scaling
+    node_count          = var.enable_auto_scaling ? null : var.default_node_pool_count
+    vm_size             = var.default_node_pool_vm_size
+    zones               = var.availability_zones
+    max_pods            = var.max_pods
+    os_disk_size_gb     = var.os_disk_size_gb
+    min_count           = var.enable_auto_scaling ? var.min_count : null
+    max_count           = var.enable_auto_scaling ? var.max_count : null
   }
 
   service_principal {
