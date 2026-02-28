@@ -17,6 +17,17 @@ provider "azurerm" {
   client_secret   = var.azure_client_secret
 }
 
+# Create the resource group that modules will reference
+resource "azurerm_resource_group" "main" {
+  name     = var.resource_group_name
+  location = var.location
+
+  tags = merge(
+    var.tags,
+    { environment = "dev" }
+  )
+}
+
 module "storage_account" {
   source                   = "../../terraform/azure_storage_account"
   name                     = var.storage_account_name
@@ -29,6 +40,8 @@ module "storage_account" {
     var.tags,
     { environment = "dev" }
   )
+
+  depends_on = [azurerm_resource_group.main]
 }
 
 module "aks" {
@@ -51,4 +64,6 @@ module "aks" {
     var.tags,
     { environment = "dev" }
   )
+
+  depends_on = [azurerm_resource_group.main]
 }
