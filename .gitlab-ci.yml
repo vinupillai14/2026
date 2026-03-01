@@ -215,15 +215,18 @@ destroy_all_dev:
   script:
     - echo "🔥 DESTROYING EVERYTHING IN DEV..."
     - echo ""
-    - echo "Step 1: Connecting to AKS cluster..."
+    - echo "Step 1: Installing kubectl..."
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - chmod +x kubectl && mv kubectl /usr/local/bin/
+    - echo ""
+    - echo "Step 2: Connecting to AKS cluster..."
     - az aks get-credentials --resource-group rg-dev-2026 --name aks-dev-2026 --overwrite-existing || echo "AKS not found, skipping kubectl cleanup"
     - echo ""
-    - echo "Step 2: Deleting Flux-deployed apps..."
-    - apk add --no-cache kubectl || true
+    - echo "Step 3: Deleting Flux-deployed apps..."
     - kubectl delete namespace demo --ignore-not-found=true || echo "Namespace demo not found"
     - kubectl delete namespace flux-system --ignore-not-found=true || echo "Namespace flux-system not found"
     - echo ""
-    - echo "Step 3: Destroying Terraform infrastructure..."
+    - echo "Step 4: Destroying Terraform infrastructure..."
     - terraform init
     - terraform destroy -auto-approve
     - echo ""
@@ -242,15 +245,18 @@ destroy_all_preprod:
   script:
     - echo "🔥 DESTROYING EVERYTHING IN PREPROD..."
     - echo ""
-    - echo "Step 1: Connecting to AKS cluster..."
+    - echo "Step 1: Installing kubectl..."
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    - chmod +x kubectl && mv kubectl /usr/local/bin/
+    - echo ""
+    - echo "Step 2: Connecting to AKS cluster..."
     - az aks get-credentials --resource-group rg-preprod-2026 --name aks-preprod-2026 --overwrite-existing || echo "AKS not found, skipping kubectl cleanup"
     - echo ""
-    - echo "Step 2: Deleting Flux-deployed apps..."
-    - apk add --no-cache kubectl || true
+    - echo "Step 3: Deleting Flux-deployed apps..."
     - kubectl delete namespace demo --ignore-not-found=true || echo "Namespace demo not found"
     - kubectl delete namespace flux-system --ignore-not-found=true || echo "Namespace flux-system not found"
     - echo ""
-    - echo "Step 3: Destroying Terraform infrastructure..."
+    - echo "Step 4: Destroying Terraform infrastructure..."
     - terraform init
     - terraform destroy -auto-approve
     - echo ""
