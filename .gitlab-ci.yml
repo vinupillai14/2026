@@ -261,10 +261,3 @@ destroy_all_preprod:
   environment:
     name: preprod
     action: stop
-    - terraform destroy -target=module.aks -auto-approve
-    - echo "✅ PREPROD AKS destroyed (storage account preserved)"
-  only:
-    - main
-  when: manual
-  environment:
-    name: preprod
