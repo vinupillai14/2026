@@ -1,0 +1,2 @@
+# FluxCD will manage this directory
+# Apps deployed here will auto-sync to dev AKS cluster
