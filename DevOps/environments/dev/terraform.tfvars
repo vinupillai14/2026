@@ -8,7 +8,7 @@ storage_replication_type = "LRS"
 aks_cluster_name = "aks-dev-2026"
 aks_dns_prefix   = "aksdev2026"
 
-node_pool_vm_size = "Standard_D2_v3"
+node_pool_vm_size = "Standard_DC2s_v3"
 node_pool_count   = 2
 
 enable_auto_scaling = false

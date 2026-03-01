@@ -8,7 +8,7 @@ storage_replication_type = "GRS"
 aks_cluster_name = "aks-preprod-2026"
 aks_dns_prefix   = "akspreprod2026"
 
-node_pool_vm_size = "Standard_D4_v3"
+node_pool_vm_size = "Standard_DC4s_v3"
 node_pool_count   = 3
 
 enable_auto_scaling = false
