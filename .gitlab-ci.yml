@@ -174,7 +174,34 @@ destroy_preprod:
     name: preprod
     action: stop
 
+# ==== TARGETED DESTROY JOBS ====
+
+destroy_aks_dev:
+  stage: destroy
+  variables:
+    TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/dev"
+  script:
+    - echo "⚠️  Destroying only AKS in DEV (keeping storage account)..."
+    - terraform init
+    - terraform destroy -target=module.aks -auto-approve
+    - echo "✅ DEV AKS destroyed (storage account preserved)"
+  only:
+    - main
   when: manual
   environment:
     name: dev
-    action: stop
+
+destroy_aks_preprod:
+  stage: destroy
+  variables:
+    TF_ROOT: "${CI_PROJECT_DIR}/DevOps/environments/preprod"
+  script:
+    - echo "⚠️  Destroying only AKS in PREPROD (keeping storage account)..."
+    - terraform init
+    - terraform destroy -target=module.aks -auto-approve
+    - echo "✅ PREPROD AKS destroyed (storage account preserved)"
+  only:
+    - main
+  when: manual
+  environment:
+    name: preprod
