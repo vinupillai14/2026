@@ -1,0 +1,9 @@
+# Flux HelmRepository - Eclipse Che operator chart
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: eclipse-che
+  namespace: eclipse-che
+spec:
+  interval: 1h
+  url: https://eclipse-che.github.io/che-operator/

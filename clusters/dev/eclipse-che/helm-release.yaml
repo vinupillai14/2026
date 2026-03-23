@@ -1,0 +1,50 @@
+# Flux HelmRelease - Deploys Eclipse Che operator and CheCluster
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: eclipse-che
+  namespace: eclipse-che
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: eclipse-che
+      version: "7.*"  # Latest 7.x release
+      sourceRef:
+        kind: HelmRepository
+        name: eclipse-che
+        namespace: eclipse-che
+      interval: 1h
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    # Networking - use NGINX ingress (deployed on AKS)
+    networking:
+      domain: che.aksdev2026.eastus.cloudapp.azure.com
+      ingressClass: nginx
+      tlsEnabled: false  # Set to true when you add cert-manager
+
+    # Che server configuration
+    cheServer:
+      extraProperties:
+        # Allow devfile registries
+        CHE_INFRA_KUBERNETES_NAMESPACE_DEFAULT: "<username>-che"
+        CHE_WORKSPACE_DEVFILE__REGISTRY__INTERNAL__URL: ""
+        CHE_WORKSPACE_DEVFILE__REGISTRY__URL: "https://registry.devfile.io"
+
+    # Dev workspace controller
+    devWorkspace:
+      enable: true
+      controller:
+        enable: true
+
+    # Dashboard
+    dashboard:
+      headerMessage:
+        show: true
+        text: "Dev environment powered by Eclipse Che on AKS"
